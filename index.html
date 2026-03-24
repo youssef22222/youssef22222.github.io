@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Youssef El-Sayed — Software Engineer &amp; Odoo Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+
+/* ══════════════════════════════════════
+   TOKENS
+══════════════════════════════════════ */
+:root {
+  --cream:   #FAFAF7;
+  --white:   #FFFFFF;
+  --ink:     #111111;
+  --dark:    #1C1C1C;
+  --mid:     #555555;
+  --light:   #888888;
+  --border:  #E5E5E2;
+  --border2: #D0D0CC;
+  --blue:    #1A56DB;
+  --blue-l:  #EEF3FD;
+  --blue-m:  #C7D9FA;
+  --tag-bg:  #F2F2EF;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans:  'Inter', -apple-system, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--sans);
+  background: var(--cream);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--border2); }
+
+/* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; inset-x: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  height: 64px;
+  background: rgba(250,250,247,.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; max-width: 1080px;
+  padding: 0 6vw;
+}
+.logo {
+  font-family: var(--serif);
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--ink); letter-spacing: -.3px;
+  text-decoration: none;
+}
+.logo span { color: var(--blue); }
+.nav-links { display: flex; align-items: center; gap: .2rem; list-style: none; }
+.nav-links a {
+  font-size: .83rem; font-weight: 500;
+  color: var(--mid); text-decoration: none;
+  padding: .4rem .9rem; border-radius: 6px;
+  transition: all .18s;
+}
+.nav-links a:hover { color: var(--ink); background: var(--tag-bg); }
+.nav-cta {
+  font-size: .83rem; font-weight: 600;
+  color: #fff; background: var(--blue);
+  padding: .45rem 1.2rem; border-radius: 6px;
+  text-decoration: none; transition: all .2s;
+}
+.nav-cta:hover { background: #1447BA; box-shadow: 0 2px 12px rgba(26,86,219,.3); }
+
+/* ══════════════════════════════════════
+   LAYOUT HELPERS
+══════════════════════════════════════ */
+section { padding: 6rem 6vw; }
+.wrap { max-width: 1080px; margin: 0 auto; }
+
+.eyebrow {
+  font-size: .72rem; font-weight: 600;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--blue); margin-bottom: .6rem;
+}
+h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.9rem, 3vw, 2.6rem);
+  font-weight: 700; color: var(--ink);
+  line-height: 1.15; margin-bottom: .75rem;
+}
+.rule {
+  width: 36px; height: 2px;
+  background: var(--blue);
+  margin-bottom: 3.5rem;
+}
+
+/* ══════════════════════════════════════
+   HERO
+══════════════════════════════════════ */
+#hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding-top: 7rem;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+#hero::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 0;
+  background-image: radial-gradient(var(--border) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: .5;
+}
+.hero-inner {
+  position: relative; z-index: 1;
+  max-width: 1080px; margin: 0 auto; width: 100%;
+  display: grid; grid-template-columns: 1fr 300px;
+  gap: 6rem; align-items: center;
+}
+.hero-available {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-size: .75rem; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; color: #15803D;
+  background: #F0FDF4; border: 1px solid #BBF7D0;
+  padding: .32rem .9rem; border-radius: 999px;
+  margin-bottom: 1.6rem;
+}
+.hero-available::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: #22C55E; animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+h1 {
+  font-family: var(--serif);
+  font-size: clamp(2.8rem, 5.5vw, 4.4rem);
+  font-weight: 700; color: var(--ink);
+  line-height: 1.07; letter-spacing: -.5px;
+  margin-bottom: 1rem;
+}
+h1 em { color: var(--blue); font-style: italic; }
+.hero-role {
+  font-size: .88rem; font-weight: 500; color: var(--mid);
+  letter-spacing: 1px; text-transform: uppercase;
+  margin-bottom: .8rem;
+}
+.hero-desc {
+  font-size: 1rem; color: var(--mid);
+  max-width: 500px; line-height: 1.82;
+  margin-bottom: 2.5rem; font-weight: 300;
+}
+.hero-desc strong { color: var(--ink); font-weight: 500; }
+
+.cta-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .72rem 1.7rem; border-radius: 6px;
+  font-size: .88rem; font-weight: 600;
+  text-decoration: none; transition: all .22s;
+}
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-primary:hover { background: #1447BA; box-shadow: 0 4px 20px rgba(26,86,219,.3); transform: translateY(-1px); }
+.btn-outline { border: 1.5px solid var(--border2); color: var(--mid); }
+.btn-outline:hover { border-color: var(--ink); color: var(--ink); }
+
+.hero-stats {
+  display: flex; gap: 0; margin-top: 2.8rem;
+  border: 1px solid var(--border); border-radius: 8px;
+  overflow: hidden; background: var(--white);
+}
+.hstat { flex: 1; padding: .9rem 1.2rem; text-align: center; border-right: 1px solid var(--border); }
+.hstat:last-child { border-right: none; }
+.hstat-n { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; color: var(--blue); line-height: 1; }
+.hstat-l { font-size: .7rem; color: var(--light); letter-spacing: .5px; margin-top: 3px; }
+
+.hero-photo { position: relative; }
+.photo-wrap {
+  width: 100%; aspect-ratio: 4/5;
+  border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--tag-bg);
+  box-shadow: 0 20px 60px rgba(0,0,0,.08);
+}
+.photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-flag {
+  position: absolute; bottom: -1px; left: 0; right: 0;
+  background: rgba(255,255,255,.94); border-top: 1px solid var(--border);
+  padding: .6rem 1rem;
+  display: flex; align-items: center; justify-content: space-between;
+  border-radius: 0 0 12px 12px;
+}
+.photo-flag .name { font-weight: 600; font-size: .82rem; color: var(--ink); }
+.photo-flag .loc { font-size: .75rem; color: var(--light); }
+
+/* ══════════════════════════════════════
+   ABOUT
+══════════════════════════════════════ */
+#about { background: var(--cream); }
+.about-cols { display: grid; grid-template-columns: 1.1fr 1fr; gap: 5rem; align-items: start; }
+
+.about-body p {
+  font-size: .97rem; color: var(--mid); line-height: 1.85;
+  margin-bottom: 1.1rem; font-weight: 300;
+}
+.about-body strong { color: var(--ink); font-weight: 500; }
+
+.info-list { margin-top: 1.8rem; border-top: 1px solid var(--border); }
+.info-item {
+  display: flex; gap: 1rem; padding: .6rem 0;
+  border-bottom: 1px solid var(--border); font-size: .88rem;
+}
+.info-lbl { font-weight: 600; color: var(--ink); min-width: 80px; flex-shrink: 0; }
+.info-val { color: var(--mid); }
+.info-val a { color: var(--blue); text-decoration: none; }
+.info-val a:hover { text-decoration: underline; }
+
+.skills-side { display: flex; flex-direction: column; gap: 1.8rem; }
+.sk-group h4 {
+  font-size: .72rem; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--light);
+  margin-bottom: .7rem; padding-bottom: .4rem;
+  border-bottom: 1px solid var(--border);
+}
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.chip {
+  font-size: .77rem; font-weight: 500; padding: .25rem .75rem;
+  border-radius: 4px; color: var(--mid);
+  background: var(--tag-bg); border: 1px solid var(--border);
+  transition: all .15s;
+}
+.chip:hover { border-color: var(--blue-m); color: var(--blue); background: var(--blue-l); }
+.chip.hi { background: var(--blue-l); border-color: var(--blue-m); color: var(--blue); }
+
+/* ══════════════════════════════════════
+   EXPERIENCE
+══════════════════════════════════════ */
+#experience { background: var(--white); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.exp-layout { display: grid; grid-template-columns: 200px 1fr; gap: 4rem; }
+
+.exp-tabs { display: flex; flex-direction: column; border-right: 1px solid var(--border); }
+.exp-tab {
+  font-size: .83rem; font-weight: 500; color: var(--light);
+  padding: .75rem 1rem .75rem 0;
+  cursor: pointer; border: none; background: none; text-align: left;
+  border-right: 2px solid transparent; margin-right: -1px;
+  transition: all .2s;
+}
+.exp-tab:hover { color: var(--ink); }
+.exp-tab.active { color: var(--blue); border-right-color: var(--blue); font-weight: 600; }
+
+.exp-panel { display: none; }
+.exp-panel.active { display: block; }
+
+.ep-title { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; color: var(--ink); margin-bottom: .2rem; }
+.ep-role { font-size: .82rem; font-weight: 600; color: var(--blue); letter-spacing: .5px; text-transform: uppercase; margin-bottom: .2rem; }
+.ep-period { font-size: .8rem; color: var(--light); margin-bottom: 1.4rem; }
+
+.ep-list { list-style: none; display: flex; flex-direction: column; gap: .7rem; }
+.ep-list li {
+  font-size: .94rem; color: var(--mid); line-height: 1.75;
+  padding-left: 1.4rem; position: relative; font-weight: 300;
+}
+.ep-list li::before {
+  content: ''; position: absolute; left: 0; top: 10px;
+  width: 5px; height: 5px; border-radius: 50%; background: var(--blue);
+}
+.ep-list strong { color: var(--ink); font-weight: 500; }
+
+.ep-stack { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1.3rem; padding-top: 1.3rem; border-top: 1px solid var(--border); }
+.stag {
+  font-size: .73rem; font-weight: 500; padding: .22rem .65rem;
+  border-radius: 4px; background: var(--tag-bg);
+  border: 1px solid var(--border); color: var(--mid);
+}
+
+/* ══════════════════════════════════════
+   PROJECTS
+══════════════════════════════════════ */
+#projects { background: var(--cream); }
+.proj-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+
+.proj-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; padding: 2rem;
+  transition: all .25s; display: flex; flex-direction: column;
+}
+.proj-card:hover { box-shadow: 0 8px 40px rgba(0,0,0,.07); transform: translateY(-2px); border-color: var(--blue-m); }
+
+.proj-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: .5rem; }
+.proj-num { font-size: .72rem; font-weight: 600; color: var(--light); letter-spacing: 1px; }
+.proj-status {
+  font-size: .68rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+  padding: .18rem .6rem; border-radius: 999px;
+}
+.status-live { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
+.status-done { background: var(--tag-bg); color: var(--light); border: 1px solid var(--border); }
+
+.proj-title { font-family: var(--serif); font-size: 1.15rem; font-weight: 700; color: var(--ink); margin-bottom: .25rem; line-height: 1.25; }
+.proj-period { font-size: .76rem; color: var(--light); margin-bottom: .9rem; }
+.proj-desc { font-size: .88rem; color: var(--mid); line-height: 1.78; margin-bottom: 1.2rem; font-weight: 300; flex: 1; }
+
+.proj-feats { list-style: none; margin-bottom: 1.2rem; }
+.proj-feats li {
+  font-size: .83rem; color: var(--mid); line-height: 1.65;
+  padding: .28rem 0 .28rem 1rem; position: relative;
+  border-bottom: 1px solid var(--border);
+}
+.proj-feats li:last-child { border-bottom: none; }
+.proj-feats li::before { content: '→'; position: absolute; left: 0; color: var(--blue); font-size: .75rem; top: 6px; }
+
+.proj-tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: auto; }
+.ptag {
+  font-size: .71rem; font-weight: 500; padding: .2rem .6rem;
+  border-radius: 4px; background: var(--blue-l);
+  border: 1px solid var(--blue-m); color: var(--blue);
+}
+
+/* ══════════════════════════════════════
+   ACHIEVEMENTS
+══════════════════════════════════════ */
+#achievements { background: var(--white); border-top: 1px solid var(--border); }
+.ach-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-bottom: 2.5rem; }
+.ach-card {
+  background: var(--cream); border: 1px solid var(--border);
+  border-radius: 10px; padding: 1.5rem; transition: border-color .25s;
+}
+.ach-card:hover { border-color: var(--blue-m); }
+.ach-icon { font-size: 1.8rem; margin-bottom: .7rem; }
+.ach-title { font-weight: 600; font-size: .9rem; color: var(--ink); margin-bottom: .4rem; line-height: 1.35; }
+.ach-sub { font-size: .82rem; color: var(--mid); line-height: 1.65; font-weight: 300; }
+.ach-sub a { color: var(--blue); text-decoration: none; font-size: .78rem; }
+.ach-sub a:hover { text-decoration: underline; }
+
+.cert-row { display: flex; flex-wrap: wrap; gap: .8rem; }
+.cert {
+  display: flex; align-items: center; gap: .6rem;
+  background: var(--cream); border: 1px solid var(--border);
+  border-radius: 6px; padding: .65rem 1.1rem;
+  font-size: .8rem; font-weight: 500; color: var(--mid);
+  text-decoration: none; transition: all .2s;
+}
+.cert:hover { border-color: var(--blue-m); color: var(--blue); background: var(--blue-l); }
+
+/* ══════════════════════════════════════
+   CONTACT
+══════════════════════════════════════ */
+#contact { background: var(--ink); }
+#contact .eyebrow { color: #7CA3F7; }
+#contact h2 { color: var(--white); }
+#contact .rule { background: #3B6FE8; }
+#contact > .wrap > p {
+  font-size: .97rem; color: #94A3B8; line-height: 1.85;
+  margin-bottom: 2.5rem; max-width: 520px; font-weight: 300;
+}
+
+.c-grid { display: flex; flex-wrap: wrap; gap: .8rem; }
+.c-card {
+  display: flex; align-items: center; gap: .7rem;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px; padding: .8rem 1.3rem;
+  font-size: .85rem; font-weight: 500; color: #CBD5E1;
+  text-decoration: none; transition: all .22s;
+}
+.c-card:hover { background: rgba(59,111,232,.15); border-color: rgba(59,111,232,.4); color: #fff; }
+.c-icon { font-size: 1rem; }
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer {
+  background: var(--ink);
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding: 1.5rem 6vw;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: .75rem; color: #475569; flex-wrap: wrap; gap: .5rem;
+}
+
+/* ══════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════ */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .65s ease, transform .65s ease; }
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .nav-inner { padding: 0 4vw; }
+  .nav-links { display: none; }
+  section { padding: 4rem 4vw; }
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-photo { display: none; }
+  .about-cols { grid-template-columns: 1fr; gap: 2.5rem; }
+  .exp-layout { grid-template-columns: 1fr; }
+  .exp-tabs {
+    flex-direction: row; flex-wrap: wrap;
+    border-right: none; border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem; margin-bottom: 1.5rem;
+  }
+  .exp-tab {
+    border-right: none; border-bottom: 2px solid transparent;
+    padding: .5rem .8rem; margin-right: 0;
+  }
+  .exp-tab.active { border-right-color: transparent; border-bottom-color: var(--blue); }
+  .proj-grid { grid-template-columns: 1fr; }
+  .ach-grid { grid-template-columns: 1fr; }
+  .hero-stats { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#hero" class="logo">Youssef<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#achievements">Achievements</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="mailto:youssef.elsayed0111&#64;gmail.com" class="nav-cta">Hire Me</a>
+  </div>
+</nav>
+
+<!-- ════ HERO ════ -->
+<section id="hero">
+  <div class="hero-inner">
+
+    <div class="reveal">
+      <div class="hero-available">Open to Opportunities</div>
+      <div class="hero-role">Software Engineer &nbsp;·&nbsp; Odoo Developer &nbsp;·&nbsp; Cairo, Egypt</div>
+      <h1>Youssef<br/><em>El-Sayed</em></h1>
+      <p class="hero-desc">
+        I build <strong>enterprise fleet telematics systems</strong> and
+        <strong>multi-tenant SaaS platforms</strong> on Odoo for
+        <strong>Galaxy Solutions ITC, Saudi Arabia</strong>. Competitive
+        programmer, software instructor, and Odoo specialist across versions 14 through 19.
+      </p>
+      <div class="cta-row">
+        <a href="#projects" class="btn btn-primary">View Projects</a>
+        <a href="#contact" class="btn btn-outline">Get in Touch</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-n">3+</div><div class="hstat-l">Years Exp.</div></div>
+        <div class="hstat"><div class="hstat-n">2</div><div class="hstat-l">Live Systems</div></div>
+        <div class="hstat"><div class="hstat-n">~2K</div><div class="hstat-l">CF Problems</div></div>
+        <div class="hstat"><div class="hstat-n">14–19</div><div class="hstat-l">Odoo</div></div>
+      </div>
+    </div>
+
+    <div class="hero-photo reveal" style="transition-delay:.2s">
+      <div class="photo-wrap">
+        <img src="profile.jpg" alt="Youssef El-Sayed"/>
+      </div>
+      <div class="photo-flag">
+        <span class="name">Youssef El-Sayed</span>
+        <span class="loc">&#128205; Cairo, Egypt</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════ ABOUT ════ -->
+<section id="about">
+  <div class="wrap">
+    <div class="eyebrow">About</div>
+    <h2>Who I Am</h2>
+    <div class="rule"></div>
+    <div class="about-cols">
+
+      <div class="about-body reveal">
+        <p>
+          I'm a <strong>Software Engineer</strong> based in Cairo specializing in
+          <strong>Odoo ERP module development</strong> and IoT fleet systems. Since February 2025
+          I've been working at <strong>Galaxy Solutions ITC (Saudi Arabia)</strong>, building
+          enterprise-scale telematics platforms used by fleet operators across the region.
+        </p>
+        <p>
+          My Odoo experience spans <strong>versions 14 through 19</strong> — from Python ORM and
+          custom addon development to OWL frontend components, QWeb reports, and multi-tenant SaaS
+          architecture on PostgreSQL.
+        </p>
+        <p>
+          Beyond enterprise work, I'm an active <strong>competitive programmer</strong> with ~2,000
+          problems solved on Codeforces and a top-5 placement in the ICPC ECPC Qualifications. I
+          also serve as a <strong>Software Instructor</strong> in Egypt's national Digital Egypt Cubs
+          Initiative (Almentor), mentoring the next generation of engineers.
+        </p>
+        <div class="info-list">
+          <div class="info-item"><span class="info-lbl">Location</span><span class="info-val">Cairo, Egypt</span></div>
+          <div class="info-item"><span class="info-lbl">Company</span><span class="info-val">Galaxy Solutions ITC — Saudi Arabia (Remote)</span></div>
+          <div class="info-item"><span class="info-lbl">Email</span><span class="info-val"><a href="mailto:youssef.elsayed0111&#64;gmail.com" target="_blank">youssef.elsayed0111&#64;gmail.com</a></span></div>
+          <div class="info-item"><span class="info-lbl">Phone</span><span class="info-val">+201113885845 &nbsp;·&nbsp; +201013797110</span></div>
+          <div class="info-item"><span class="info-lbl">LinkedIn</span><span class="info-val"><a href="https://linkedin.com/in/YoussefElsayedYoussef/" target="_blank">linkedin.com/in/YoussefElsayedYoussef</a></span></div>
+          <div class="info-item"><span class="info-lbl">GitHub</span><span class="info-val"><a href="https://github.com/youssef22222" target="_blank">github.com/youssef22222</a></span></div>
+          <div class="info-item"><span class="info-lbl">Education</span><span class="info-val">B.Sc. CS — Assiut University &nbsp;·&nbsp; GPA 3.22 / 4.0 &nbsp;·&nbsp; 2022</span></div>
+          <div class="info-item"><span class="info-lbl">Languages</span><span class="info-val">Arabic (Native) &nbsp;·&nbsp; English (B2)</span></div>
+        </div>
+      </div>
+
+      <div class="skills-side reveal" style="transition-delay:.1s">
+        <div class="sk-group">
+          <h4>Languages</h4>
+          <div class="chips">
+            <span class="chip hi">Python</span>
+            <span class="chip hi">JavaScript</span>
+            <span class="chip">SQL</span>
+            <span class="chip">XML</span>
+            <span class="chip">HTML</span>
+            <span class="chip">CSS</span>
+            <span class="chip">C#</span>
+            <span class="chip">C++</span>
+          </div>
+        </div>
+        <div class="sk-group">
+          <h4>Odoo &amp; ERP</h4>
+          <div class="chips">
+            <span class="chip hi">Odoo 14 – 19</span>
+            <span class="chip hi">Odoo ORM</span>
+            <span class="chip hi">OWL Framework</span>
+            <span class="chip hi">QWeb</span>
+            <span class="chip">Custom Addons</span>
+            <span class="chip">XML Views</span>
+            <span class="chip">Workflows</span>
+          </div>
+        </div>
+        <div class="sk-group">
+          <h4>Backend &amp; Data</h4>
+          <div class="chips">
+            <span class="chip">PostgreSQL</span>
+            <span class="chip">MySQL</span>
+            <span class="chip">REST APIs</span>
+            <span class="chip">MQTT</span>
+            <span class="chip">Entity Framework</span>
+          </div>
+        </div>
+        <div class="sk-group">
+          <h4>IoT &amp; Integrations</h4>
+          <div class="chips">
+            <span class="chip">Flespi API</span>
+            <span class="chip">WASL</span>
+            <span class="chip">Google Maps</span>
+            <span class="chip">Leaflet Maps</span>
+            <span class="chip">XlsxWriter</span>
+          </div>
+        </div>
+        <div class="sk-group">
+          <h4>Core &amp; Tools</h4>
+          <div class="chips">
+            <span class="chip">Algorithms</span>
+            <span class="chip">Data Structures</span>
+            <span class="chip">OOP</span>
+            <span class="chip">SDLC</span>
+            <span class="chip">AI Tools</span>
+            <span class="chip">Git</span>
+            <span class="chip">Linux</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════ EXPERIENCE ════ -->
+<section id="experience">
+  <div class="wrap">
+    <div class="eyebrow">Career</div>
+    <h2>Work Experience</h2>
+    <div class="rule"></div>
+    <div class="exp-layout reveal">
+
+      <div class="exp-tabs">
+        <button class="exp-tab active" data-p="galaxy">Galaxy Solutions</button>
+        <button class="exp-tab" data-p="almentor">Almentor</button>
+        <button class="exp-tab" data-p="icpc">ICPC Mentor</button>
+        <button class="exp-tab" data-p="iti">ITI Intern</button>
+      </div>
+
+      <div class="exp-panels">
+
+        <div class="exp-panel active" id="p-galaxy">
+          <div class="ep-title">Galaxy Solutions ITC</div>
+          <div class="ep-role">Odoo Developer</div>
+          <div class="ep-period">Feb 2025 – Present &nbsp;·&nbsp; Saudi Arabia (Remote)</div>
+          <ul class="ep-list">
+            <li>Developing and maintaining <strong>enterprise fleet telematics platforms</strong> and <strong>multi-tenant SaaS systems</strong> on Odoo 14 &amp; 15</li>
+            <li>Building <strong>real-time GPS tracking</strong> with MQTT/WebSocket, event detection (speed violations, SOS, geofence alerts), and analytics &amp; reporting modules</li>
+            <li>Designing <strong>multi-tenant SaaS architecture</strong> with isolated per-customer databases, subscription management, and REST APIs</li>
+            <li>Handling <strong>third-party integrations</strong> (Flespi, WASL) and delivering automated reports and data exports</li>
+          </ul>
+          <div class="ep-stack">
+            <span class="stag">Odoo 14</span><span class="stag">Odoo 15</span><span class="stag">Python</span>
+            <span class="stag">MQTT</span><span class="stag">PostgreSQL</span><span class="stag">REST APIs</span>
+            <span class="stag">Flespi</span><span class="stag">WASL</span><span class="stag">OWL</span><span class="stag">QWeb</span>
+          </div>
+        </div>
+
+        <div class="exp-panel" id="p-almentor">
+          <div class="ep-title">Almentor</div>
+          <div class="ep-role">Software Instructor</div>
+          <div class="ep-period">Jul 2024 – Present &nbsp;·&nbsp; Cairo, Egypt</div>
+          <ul class="ep-list">
+            <li>Teaching ICT and software development as part of the <strong>Digital Egypt Cubs Initiative</strong>, launched by the Ministry of Communications and Information Technology</li>
+            <li>Educating and mentoring youth to prepare them for Egypt's digital vision, covering programming fundamentals and software engineering practices</li>
+          </ul>
+        </div>
+
+        <div class="exp-panel" id="p-icpc">
+          <div class="ep-title">ICPC Assiut University Community</div>
+          <div class="ep-role">Competitive Programming Mentor</div>
+          <div class="ep-period">Mar 2022 – Mar 2023 &nbsp;·&nbsp; Assiut, Egypt</div>
+          <ul class="ep-list">
+            <li>Mentored students in <strong>algorithms, data structures</strong>, and ICPC contest strategy</li>
+            <li>Identified each mentee's challenges and provided customized guidance for their specific issues</li>
+            <li>Built trust-based mentoring relationships that prepared students for regional ICPC qualifications</li>
+          </ul>
+        </div>
+
+        <div class="exp-panel" id="p-iti">
+          <div class="ep-title">Information Technology Institute (ITI)</div>
+          <div class="ep-role">Software Development Intern</div>
+          <div class="ep-period">Jul 2021 – Aug 2021 &nbsp;·&nbsp; Assiut, Egypt</div>
+          <ul class="ep-list">
+            <li>Completed a <strong>132-hour intensive .NET web development program</strong> covering ASP.NET, Entity Framework, and SQL Server</li>
+            <li>Collaborated with mentors on real-world challenges and delivered practical solutions</li>
+            <li>Delivered the <strong>Train Ticket Reservation System</strong> as internship capstone project</li>
+          </ul>
+          <div class="ep-stack">
+            <span class="stag">C# .NET</span><span class="stag">ASP.NET</span>
+            <span class="stag">Entity Framework</span><span class="stag">SQL Server</span>
+            <span class="stag">HTML</span><span class="stag">CSS</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ PROJECTS ════ -->
+<section id="projects">
+  <div class="wrap">
+    <div class="eyebrow">Work</div>
+    <h2>Projects</h2>
+    <div class="rule"></div>
+    <div class="proj-grid">
+
+      <div class="proj-card reveal">
+        <div class="proj-top">
+          <div class="proj-num">01 &nbsp;·&nbsp; Galaxy Solutions ITC</div>
+          <span class="proj-status status-live">Live</span>
+        </div>
+        <div class="proj-title">Fleet Telematics &amp; GPS Tracking</div>
+        <div class="proj-period">Mar 2025 – Present</div>
+        <p class="proj-desc">Enterprise vehicle telematics platform on Odoo 14 with real-time GPS tracking via MQTT/WebSocket, covering event detection, compliance, and full analytics reporting.</p>
+        <ul class="proj-feats">
+          <li>Real-time GPS via MQTT/WebSocket</li>
+          <li>Speed violations, SOS alerts, geofence detection</li>
+          <li>Flespi &amp; WASL integration (Saudi compliance)</li>
+          <li>Analytics reports — PDF &amp; Excel export</li>
+          <li>Google Maps &amp; Leaflet live tracking views</li>
+        </ul>
+        <div class="proj-tags">
+          <span class="ptag">Odoo 14</span><span class="ptag">Python</span><span class="ptag">MQTT</span>
+          <span class="ptag">REST APIs</span><span class="ptag">PostgreSQL</span>
+          <span class="ptag">JavaScript</span><span class="ptag">HTML</span><span class="ptag">CSS</span>
+        </div>
+      </div>
+
+      <div class="proj-card reveal" style="transition-delay:.08s">
+        <div class="proj-top">
+          <div class="proj-num">02 &nbsp;·&nbsp; Galaxy Solutions ITC</div>
+          <span class="proj-status status-live">Live</span>
+        </div>
+        <div class="proj-title">Fleet Telematics SaaS Platform</div>
+        <div class="proj-period">Jul 2025 – Present</div>
+        <p class="proj-desc">Multi-tenant SaaS fleet management on Odoo 15 with per-customer database isolation, subscription services, and integrated external fleet platforms.</p>
+        <ul class="proj-feats">
+          <li>Multi-tenant architecture — isolated customer databases</li>
+          <li>Subscription management &amp; helpdesk ticketing</li>
+          <li>Flespi &amp; WASL platform integration</li>
+          <li>Custom analytics dashboards</li>
+          <li>REST APIs for external system access</li>
+        </ul>
+        <div class="proj-tags">
+          <span class="ptag">Odoo 15</span><span class="ptag">Python</span><span class="ptag">REST APIs</span>
+          <span class="ptag">PostgreSQL</span><span class="ptag">OWL</span>
+          <span class="ptag">JavaScript</span><span class="ptag">HTML</span><span class="ptag">CSS</span>
+        </div>
+      </div>
+
+      <div class="proj-card reveal" style="transition-delay:.1s">
+        <div class="proj-top">
+          <div class="proj-num">03 &nbsp;·&nbsp; Graduation Project</div>
+          <span class="proj-status status-done">Completed</span>
+        </div>
+        <div class="proj-title">Medical History Software</div>
+        <div class="proj-period">Jan 2022 – Jun 2022</div>
+        <p class="proj-desc">Unified healthcare platform combining clinical, financial, and administrative patient data with privacy controls and cross-professional communication features.</p>
+        <ul class="proj-feats">
+          <li>Patient record capture, storage &amp; retrieval</li>
+          <li>Unified clinical, financial &amp; admin data platform</li>
+          <li>Privacy controls &amp; treatment decision support</li>
+        </ul>
+        <div class="proj-tags">
+          <span class="ptag">C# .NET</span><span class="ptag">REST APIs</span><span class="ptag">SQL Server</span>
+        </div>
+      </div>
+
+      <div class="proj-card reveal" style="transition-delay:.18s">
+        <div class="proj-top">
+          <div class="proj-num">04 &nbsp;·&nbsp; ITI Intern Capstone</div>
+          <span class="proj-status status-done">Completed</span>
+        </div>
+        <div class="proj-title">Train Ticket Reservation System</div>
+        <div class="proj-period">Jan – Feb 2021</div>
+        <p class="proj-desc">Booking and scheduling system for train tickets, built during the ITI .NET intensive internship program as the final capstone project.</p>
+        <ul class="proj-feats">
+          <li>Ticket booking &amp; train schedule lookup</li>
+          <li>Seat management &amp; availability tracking</li>
+        </ul>
+        <div class="proj-tags">
+          <span class="ptag">C# .NET</span><span class="ptag">SQL</span><span class="ptag">HTML</span><span class="ptag">CSS</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════ ACHIEVEMENTS ════ -->
+<section id="achievements">
+  <div class="wrap">
+    <div class="eyebrow">Recognition</div>
+    <h2>Achievements &amp; Certifications</h2>
+    <div class="rule"></div>
+    <div class="ach-grid reveal">
+      <div class="ach-card">
+        <div class="ach-icon">&#127942;</div>
+        <div class="ach-title">5th / 234 Teams — ICPC ECPC Qualifications 2022</div>
+        <div class="ach-sub">Top-5 finish in the Egyptian Collegiate Programming Contest ECPC Qualifications. <a href="https://drive.google.com/file/d/1oKf3GRFltIvEbuqH0JysnVkoW2l92ZtE/view" target="_blank" rel="noopener">Certificate &#8599;</a></div>
+      </div>
+      <div class="ach-card">
+        <div class="ach-icon">&#129351;</div>
+        <div class="ach-title">61st / 244 Teams — ICPC Egyptian Regional 2022</div>
+        <div class="ach-sub">Top-25% finish in the 2022 ICPC Egyptian Collegiate Programming Contest. <a href="https://drive.google.com/file/d/1LOAdZGbJggsp5oXe6VG6zC4zNLgaVEca/view" target="_blank" rel="noopener">Certificate &#8599;</a></div>
+      </div>
+      <div class="ach-card">
+        <div class="ach-icon">&#9889;</div>
+        <div class="ach-title">~2,000 Problems Solved on Codeforces</div>
+        <div class="ach-sub">Active competitive programmer using advanced algorithms &amp; data structures. <a href="https://codeforces.com/profile/youssefelsayed22" target="_blank" rel="noopener">youssefelsayed22 &#8599;</a></div>
+      </div>
+    </div>
+    <div class="cert-row reveal" style="transition-delay:.1s">
+      <a href="https://icpc.global/ICPCID/WWBM6PUGSDLK" target="_blank" rel="noopener" class="cert">&#127760; ICPC Profile (Aug 2022)</a>
+      <a href="https://www.hackerrank.com/certificates/aac531f55fbf" target="_blank" rel="noopener" class="cert">&#9989; HackerRank — Problem Solving (Apr 2024)</a>
+      <a href="https://www.hackerrank.com/certificates/5ea5bca459ea" target="_blank" rel="noopener" class="cert">&#9989; HackerRank — SQL (Jun 2024)</a>
+      <a href="https://drive.google.com/file/d/1LXJTt7_Qbws3cp6keSpHT6L09xAJ4hQO/view" target="_blank" rel="noopener" class="cert">&#127891; ITI .NET Certificate (Aug 2021)</a>
+    </div>
+  </div>
+</section>
+
+<!-- ════ CONTACT ════ -->
+<section id="contact">
+  <div class="wrap">
+    <div class="eyebrow">Contact</div>
+    <h2>Get in Touch</h2>
+    <div class="rule"></div>
+    <p>Open to Odoo projects, IoT system development, and new engineering opportunities. Feel free to reach out.</p>
+    <div class="c-grid reveal">
+      <a href="mailto:youssef.elsayed0111&#64;gmail.com" class="c-card"><span class="c-icon">&#9993;</span>youssef.elsayed0111&#64;gmail.com</a>
+      <a href="tel:+201113885845" class="c-card"><span class="c-icon">&#128222;</span>+20 111 388 5845</a>
+      <a href="https://linkedin.com/in/YoussefElsayedYoussef/" target="_blank" rel="noopener" class="c-card"><span class="c-icon">&#128188;</span>LinkedIn</a>
+      <a href="https://github.com/youssef22222" target="_blank" rel="noopener" class="c-card"><span class="c-icon">&#128187;</span>GitHub</a>
+      <a href="https://codeforces.com/profile/youssefelsayed22" target="_blank" rel="noopener" class="c-card"><span class="c-icon">&#9889;</span>Codeforces</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>&#169; 2026 Youssef El-Sayed Youssef — Cairo, Egypt</span>
+  <span>Odoo Developer &nbsp;·&nbsp; Software Engineer</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const obs = new IntersectionObserver(
+    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }),
+    { threshold: 0.1 }
+  );
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  setTimeout(() => {
+    document.querySelectorAll('#hero .reveal').forEach(el => el.classList.add('in'));
+  }, 80);
+
+  // Experience tabs
+  document.querySelectorAll('.exp-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.exp-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.exp-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('p-' + btn.dataset.p).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
