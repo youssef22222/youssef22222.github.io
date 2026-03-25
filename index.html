@@ -47,7 +47,7 @@ body {
    NAV
 ══════════════════════════════════════ */
 nav {
-  position: fixed; top: 0; inset-x: 0; z-index: 200;
+  position: fixed; top: 0; inset-inline: 0; z-index: 200;
   display: flex; align-items: center; justify-content: center;
   height: 64px;
   background: rgba(250,250,247,.96);
@@ -66,6 +66,9 @@ nav {
   text-decoration: none;
 }
 .logo span { color: var(--blue); }
+
+.nav-right { display: flex; align-items: center; gap: .6rem; }
+
 .nav-links { display: flex; align-items: center; gap: .2rem; list-style: none; }
 .nav-links a {
   font-size: .83rem; font-weight: 500;
@@ -81,6 +84,98 @@ nav {
   text-decoration: none; transition: all .2s;
 }
 .nav-cta:hover { background: #1447BA; box-shadow: 0 2px 12px rgba(26,86,219,.3); }
+
+/* Hamburger button */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  z-index: 301;
+  -webkit-tap-highlight-color: transparent;
+}
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: all .3s ease;
+}
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Mobile menu overlay */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(250,250,247,.98);
+  backdrop-filter: blur(20px);
+  z-index: 199;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity .3s ease, transform .3s ease;
+}
+.mobile-menu.open {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+.mobile-menu a {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 1rem 2rem;
+  width: 100%;
+  text-align: center;
+  transition: all .2s;
+  border-bottom: 1px solid var(--border);
+}
+.mobile-menu a:first-child {
+  border-top: 1px solid var(--border);
+}
+.mobile-menu a:hover,
+.mobile-menu a:active {
+  background: var(--blue-l);
+  color: var(--blue);
+}
+.mobile-menu .mobile-cta {
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--blue);
+  padding: .7rem 2.5rem;
+  border-radius: 8px;
+  border-bottom: none;
+  width: auto;
+}
+.mobile-menu .mobile-cta:hover {
+  background: #1447BA;
+}
 
 /* ══════════════════════════════════════
    LAYOUT HELPERS
@@ -174,6 +269,20 @@ h1 em { color: var(--blue); font-style: italic; }
 .btn-primary:hover { background: #1447BA; box-shadow: 0 4px 20px rgba(26,86,219,.3); transform: translateY(-1px); }
 .btn-outline { border: 1.5px solid var(--border2); color: var(--mid); }
 .btn-outline:hover { border-color: var(--ink); color: var(--ink); }
+.btn-download {
+  background: var(--ink); color: #fff;
+  border: 1.5px solid var(--ink);
+}
+.btn-download:hover {
+  background: var(--dark);
+  box-shadow: 0 4px 20px rgba(17,17,17,.25);
+  transform: translateY(-1px);
+}
+.btn-download svg {
+  width: 16px; height: 16px;
+  fill: none; stroke: currentColor;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
 
 .hero-stats {
   display: flex; gap: 0; margin-top: 2.8rem;
@@ -302,7 +411,7 @@ h1 em { color: var(--blue); font-style: italic; }
 .proj-num { font-size: .72rem; font-weight: 600; color: var(--light); letter-spacing: 1px; }
 .proj-status {
   font-size: .68rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
-  padding: .18rem .6rem; border-radius: 999px;
+  padding: .18rem .6rem; border-radius: 999px; flex-shrink: 0;
 }
 .status-live { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
 .status-done { background: var(--tag-bg); color: var(--light); border: 1px solid var(--border); }
@@ -394,20 +503,45 @@ footer {
 .reveal.in { opacity: 1; transform: translateY(0); }
 
 /* ══════════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — TABLET (max-width: 900px)
 ══════════════════════════════════════ */
 @media (max-width: 900px) {
   .nav-inner { padding: 0 4vw; }
   .nav-links { display: none; }
+  .nav-cta.desktop-only { display: none; }
+  .hamburger { display: flex; }
+
   section { padding: 4rem 4vw; }
-  .hero-inner { grid-template-columns: 1fr; }
-  .hero-photo { display: none; }
+
+  /* Hero — photo on top, content below */
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .hero-photo {
+    order: -1;
+    display: block;
+    max-width: 220px;
+    margin: 0 auto;
+  }
+  .photo-wrap {
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    box-shadow: 0 12px 40px rgba(0,0,0,.1);
+  }
+  .photo-flag { display: none; }
+  .hero-text { text-align: center; }
+  .hero-text .hero-available { margin-left: auto; margin-right: auto; }
+  .hero-text .hero-desc { margin-left: auto; margin-right: auto; }
+  .hero-text .cta-row { justify-content: center; }
+  .hero-text .hero-stats { justify-content: center; }
+
   .about-cols { grid-template-columns: 1fr; gap: 2.5rem; }
-  .exp-layout { grid-template-columns: 1fr; }
+  .exp-layout { grid-template-columns: 1fr; gap: 1.5rem; }
   .exp-tabs {
     flex-direction: row; flex-wrap: wrap;
     border-right: none; border-bottom: 1px solid var(--border);
-    padding-bottom: 1rem; margin-bottom: 1.5rem;
+    padding-bottom: .8rem; margin-bottom: 1rem; gap: .3rem;
   }
   .exp-tab {
     border-right: none; border-bottom: 2px solid transparent;
@@ -415,8 +549,174 @@ footer {
   }
   .exp-tab.active { border-right-color: transparent; border-bottom-color: var(--blue); }
   .proj-grid { grid-template-columns: 1fr; }
-  .ach-grid { grid-template-columns: 1fr; }
-  .hero-stats { display: none; }
+  .ach-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — MOBILE (max-width: 600px)
+══════════════════════════════════════ */
+@media (max-width: 600px) {
+  html { font-size: 15px; }
+
+  .nav-inner { padding: 0 4vw; }
+
+  section { padding: 3rem 5vw; }
+  .rule { margin-bottom: 2rem; }
+
+  /* Hero */
+  #hero { min-height: auto; padding-top: 5.5rem; padding-bottom: 3rem; }
+
+  .hero-photo {
+    max-width: 160px;
+  }
+
+  h1 { font-size: clamp(2.2rem, 10vw, 3rem); margin-bottom: .7rem; }
+  .hero-role {
+    font-size: .73rem; letter-spacing: .5px;
+    margin-bottom: .6rem;
+  }
+  .hero-available {
+    font-size: .68rem; padding: .25rem .7rem;
+    margin-bottom: 1.2rem;
+  }
+  .hero-desc {
+    font-size: .92rem; line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+  .cta-row {
+    flex-direction: column; gap: .7rem;
+  }
+  .btn {
+    justify-content: center;
+    padding: .85rem 1.5rem;
+    font-size: .9rem;
+    width: 100%;
+    text-align: center;
+  }
+  .hero-stats {
+    display: flex;
+    margin-top: 2rem;
+  }
+  .hstat { padding: .7rem .5rem; }
+  .hstat-n { font-size: 1.15rem; }
+  .hstat-l { font-size: .62rem; }
+
+  /* About */
+  .about-cols { gap: 2rem; }
+  .about-body p { font-size: .9rem; line-height: 1.75; }
+
+  .info-item {
+    flex-direction: column;
+    gap: .15rem;
+    padding: .55rem 0;
+  }
+  .info-lbl {
+    font-size: .78rem;
+    min-width: auto;
+  }
+  .info-val {
+    font-size: .84rem;
+    word-break: break-all;
+  }
+
+  .chips { gap: .35rem; }
+  .chip {
+    font-size: .73rem;
+    padding: .3rem .65rem;
+  }
+
+  /* Experience */
+  .exp-tabs {
+    gap: .25rem;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: .6rem;
+  }
+  .exp-tabs::-webkit-scrollbar { display: none; }
+  .exp-tab {
+    white-space: nowrap;
+    font-size: .78rem;
+    padding: .45rem .65rem;
+    flex-shrink: 0;
+  }
+  .ep-title { font-size: 1.1rem; }
+  .ep-list li { font-size: .88rem; line-height: 1.65; padding-left: 1.2rem; }
+  .ep-stack { gap: .35rem; }
+  .stag { font-size: .7rem; padding: .2rem .55rem; }
+
+  /* Projects */
+  .proj-card { padding: 1.4rem; }
+  .proj-title { font-size: 1.05rem; }
+  .proj-desc { font-size: .84rem; }
+  .proj-feats li { font-size: .8rem; }
+  .proj-tags { gap: .3rem; }
+  .ptag { font-size: .68rem; padding: .18rem .5rem; }
+
+  /* Achievements */
+  .ach-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .ach-card { padding: 1.2rem; }
+  .ach-icon { font-size: 1.5rem; margin-bottom: .5rem; }
+  .ach-title { font-size: .85rem; }
+  .ach-sub { font-size: .8rem; }
+
+  .cert-row {
+    flex-direction: column;
+    gap: .6rem;
+  }
+  .cert {
+    font-size: .78rem;
+    padding: .7rem 1rem;
+    width: 100%;
+  }
+
+  /* Contact */
+  .c-grid {
+    flex-direction: column;
+    gap: .6rem;
+  }
+  .c-card {
+    width: 100%;
+    padding: .9rem 1.1rem;
+    font-size: .82rem;
+  }
+
+  /* Footer */
+  footer {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem 5vw;
+    gap: .3rem;
+  }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — VERY SMALL (max-width: 380px)
+══════════════════════════════════════ */
+@media (max-width: 380px) {
+  html { font-size: 14px; }
+  h1 { font-size: 2rem; }
+  .hero-role { font-size: .68rem; }
+  .hero-photo { max-width: 130px; }
+  section { padding: 2.5rem 4vw; }
+  .hero-stats { flex-wrap: wrap; }
+  .hstat {
+    flex: 1 1 40%;
+    border-bottom: 1px solid var(--border);
+  }
+  .hstat:nth-child(3),
+  .hstat:nth-child(4) { border-bottom: none; }
+  .hstat:nth-child(2) { border-right: none; }
+}
+
+/* Prevent body scroll when mobile menu is open */
+body.menu-open {
+  overflow: hidden;
 }
 </style>
 </head>
@@ -433,15 +733,33 @@ footer {
       <li><a href="#achievements">Achievements</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    <a href="mailto:youssef.elsayed0111&#64;gmail.com" class="nav-cta">Hire Me</a>
+    <div class="nav-right">
+      <a href="mailto:youssef.elsayed0111&#64;gmail.com" class="nav-cta desktop-only">Hire Me</a>
+      <button class="hamburger" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
   </div>
 </nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" class="mobile-link">About</a>
+  <a href="#experience" class="mobile-link">Experience</a>
+  <a href="#projects" class="mobile-link">Projects</a>
+  <a href="#achievements" class="mobile-link">Achievements</a>
+  <a href="#contact" class="mobile-link">Contact</a>
+  <a href="Youssef_Elsayed_CV.pdf" download class="mobile-link">📄 Download CV</a>
+  <a href="mailto:youssef.elsayed0111&#64;gmail.com" class="mobile-cta">Hire Me</a>
+</div>
 
 <!-- ════ HERO ════ -->
 <section id="hero">
   <div class="hero-inner">
 
-    <div class="reveal">
+    <div class="hero-text reveal">
       <div class="hero-available">Open to Opportunities</div>
       <div class="hero-role">Software Engineer &nbsp;·&nbsp; Odoo Developer &nbsp;·&nbsp; Cairo, Egypt</div>
       <h1>Youssef<br/><em>El-Sayed</em></h1>
@@ -453,6 +771,10 @@ footer {
       </p>
       <div class="cta-row">
         <a href="#projects" class="btn btn-primary">View Projects</a>
+        <a href="Youssef_Elsayed_CV.pdf" download class="btn btn-download">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download CV
+        </a>
         <a href="#contact" class="btn btn-outline">Get in Touch</a>
       </div>
       <div class="hero-stats">
@@ -790,6 +1112,7 @@ footer {
       <a href="https://linkedin.com/in/YoussefElsayedYoussef/" target="_blank" rel="noopener" class="c-card"><span class="c-icon">&#128188;</span>LinkedIn</a>
       <a href="https://github.com/youssef22222" target="_blank" rel="noopener" class="c-card"><span class="c-icon">&#128187;</span>GitHub</a>
       <a href="https://codeforces.com/profile/youssefelsayed22" target="_blank" rel="noopener" class="c-card"><span class="c-icon">&#9889;</span>Codeforces</a>
+      <a href="Youssef_Elsayed_CV.pdf" download class="c-card"><span class="c-icon">&#128196;</span>Download CV</a>
     </div>
   </div>
 </section>
@@ -818,6 +1141,35 @@ footer {
       btn.classList.add('active');
       document.getElementById('p-' + btn.dataset.p).classList.add('active');
     });
+  });
+
+  // Hamburger mobile menu
+  const hamburger = document.querySelector('.hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileLinks = mobileMenu.querySelectorAll('a');
+
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    mobileMenu.classList.toggle('open');
+    document.body.classList.toggle('menu-open');
+  });
+
+  // Close menu when a link is clicked
+  mobileLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('active');
+      mobileMenu.classList.remove('open');
+      document.body.classList.remove('menu-open');
+    });
+  });
+
+  // Close menu on resize to desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 900) {
+      hamburger.classList.remove('active');
+      mobileMenu.classList.remove('open');
+      document.body.classList.remove('menu-open');
+    }
   });
 </script>
 </body>
