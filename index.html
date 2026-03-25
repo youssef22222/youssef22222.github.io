@@ -1229,5 +1229,31 @@ body.menu-open {
     }
   });
 </script>
+
+<!-- Portfolio Visit Tracker -->
+<script>
+(function() {
+  // Skip if already tracked this session
+  if (sessionStorage.getItem('tracked')) return;
+  sessionStorage.setItem('tracked', '1');
+
+  var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwTln90s9DmA5IxS3XDsqguuq2Llr8y79uT4B5Eg2zupmDtgvMIoiTFcXMsRzCs2Z5X/exec";
+
+  var isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      page: document.title,
+      device: isMobile ? "📱 Mobile" : "💻 Desktop",
+      screen: screen.width + "x" + screen.height,
+      referrer: document.referrer || "Direct visit",
+      language: navigator.language
+    })
+  }).catch(function() {});
+})();
+</script>
 </body>
 </html>
