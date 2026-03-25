@@ -1257,106 +1257,76 @@ body.menu-open {
   var isMobile = /Mobi|Android|iPhone|iPad/i.test(ua);
   var device = isMobile ? "Mobile" : "Desktop";
 
-  // ── Base data (always available) ──
-  var baseData = {
-    page: document.title || "Portfolio",
-    device: device,
-    browser: browser,
-    os: os,
-    screen: screen.width + "x" + screen.height,
-    referrer: document.referrer || "Direct visit",
-    language: navigator.language || "Unknown"
-  };
-
-  // ── Send data to Google Apps Script ──
-  function sendToServer(eventType, geo) {
-    var payload = {
-      event:    eventType,
-      page:     baseData.page,
-      device:   baseData.device,
-      browser:  baseData.browser,
-      os:       baseData.os,
-      screen:   baseData.screen,
-      referrer: baseData.referrer,
-      language: baseData.language,
-      ip:       (geo && geo.ip)           ? geo.ip           : "Unknown",
-      city:     (geo && geo.city)         ? geo.city         : "Unknown",
-      region:   (geo && geo.region)       ? geo.region       : "Unknown",
-      country:  (geo && geo.country_name) ? geo.country_name : "Unknown",
-      isp:      (geo && geo.org)          ? geo.org          : "Unknown"
-    };
-
-    // Use Blob to force correct content type in all browsers
-    var blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
-
-    // sendBeacon is most reliable for not getting killed by navigation
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon(SCRIPT_URL, blob);
-    } else {
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        body: blob,
-        keepalive: true
-      }).catch(function() {});
-    }
+  // ── Send tracking via Image pixel (works in ALL browsers) ──
+  function sendPixel(params) {
+    var img = new Image();
+    var query = Object.keys(params).map(function(key) {
+      return encodeURIComponent(key) + "=" + encodeURIComponent(params[key] || "Unknown");
+    }).join("&");
+    img.src = SCRIPT_URL + "?" + query + "&_t=" + Date.now();
   }
 
-  // ── Get IP/location then send ──
+  // ── Build base params ──
+  function getBaseParams(eventType) {
+    return {
+      event:    eventType,
+      page:     document.title || "Portfolio",
+      device:   device,
+      browser:  browser,
+      os:       os,
+      scr:      screen.width + "x" + screen.height,
+      referrer: document.referrer || "Direct visit",
+      language: navigator.language || "Unknown"
+    };
+  }
+
+  // ── Get IP then send pixel ──
   function trackEvent(eventType) {
-    // Try primary IP API
+    var params = getBaseParams(eventType);
+
+    // Try to get IP/location
     fetch("https://ipapi.co/json/")
-      .then(function(res) {
-        if (!res.ok) throw new Error("API failed");
-        return res.json();
+      .then(function(r) {
+        if (!r.ok) throw new Error();
+        return r.json();
       })
       .then(function(geo) {
-        sendToServer(eventType, geo);
+        params.ip      = geo.ip || "Unknown";
+        params.city    = geo.city || "Unknown";
+        params.region  = geo.region || "Unknown";
+        params.country = geo.country_name || "Unknown";
+        params.isp     = geo.org || "Unknown";
+        sendPixel(params);
       })
       .catch(function() {
-        // Try backup IP API
+        // Try backup API
         fetch("https://ip-api.com/json/?fields=query,city,regionName,country,isp")
-          .then(function(res) { return res.json(); })
-          .then(function(data) {
-            sendToServer(eventType, {
-              ip: data.query,
-              city: data.city,
-              region: data.regionName,
-              country_name: data.country,
-              org: data.isp
-            });
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            params.ip      = d.query || "Unknown";
+            params.city    = d.city || "Unknown";
+            params.region  = d.regionName || "Unknown";
+            params.country = d.country || "Unknown";
+            params.isp     = d.isp || "Unknown";
+            sendPixel(params);
           })
           .catch(function() {
-            // Both APIs failed — send without location
-            sendToServer(eventType, null);
+            // Send without location
+            sendPixel(params);
           });
       });
   }
 
   // ── Track page visit (once per session) ──
-  if (!sessionStorage.getItem("visited")) {
-    sessionStorage.setItem("visited", "1");
+  if (!sessionStorage.getItem("pv")) {
+    sessionStorage.setItem("pv", "1");
     trackEvent("Page Visit");
   }
 
-  // ── Track CV downloads ──
+  // ── Track CV downloads (every click) ──
   document.querySelectorAll('a[href*="Youssef_Elsayed_CV"]').forEach(function(link) {
-    link.addEventListener("click", function(e) {
+    link.addEventListener("click", function() {
       trackEvent("CV Download");
-
-      // Small delay to ensure tracking completes before download starts
-      if (!link.hasAttribute("target")) {
-        e.preventDefault();
-        var href = link.getAttribute("href");
-        setTimeout(function() {
-          // Create temporary link to trigger download
-          var a = document.createElement("a");
-          a.href = href;
-          a.download = "";
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        }, 300);
-      }
     });
   });
 
