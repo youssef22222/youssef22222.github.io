@@ -1236,85 +1236,127 @@ body.menu-open {
 
   var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwTln90s9DmA5IxS3XDsqguuq2Llr8y79uT4B5Eg2zupmDtgvMIoiTFcXMsRzCs2Z5X/exec";
 
-  // ── Detect device & browser info ──
-  var ua = navigator.userAgent;
-  var isMobile = /Mobi|Android|iPhone|iPad/i.test(ua);
+  // ── Detect browser ──
+  var ua = navigator.userAgent || "";
   var browser = "Unknown";
-  if (ua.indexOf("Chrome") > -1 && ua.indexOf("Edg") === -1) browser = "Chrome";
+  if (ua.indexOf("Edg") > -1) browser = "Edge";
+  else if (ua.indexOf("OPR") > -1) browser = "Opera";
+  else if (ua.indexOf("Chrome") > -1) browser = "Chrome";
   else if (ua.indexOf("Firefox") > -1) browser = "Firefox";
-  else if (ua.indexOf("Safari") > -1 && ua.indexOf("Chrome") === -1) browser = "Safari";
-  else if (ua.indexOf("Edg") > -1) browser = "Edge";
-  else if (ua.indexOf("Opera") > -1 || ua.indexOf("OPR") > -1) browser = "Opera";
+  else if (ua.indexOf("Safari") > -1) browser = "Safari";
 
+  // ── Detect OS ──
   var os = "Unknown";
   if (ua.indexOf("Windows") > -1) os = "Windows";
-  else if (ua.indexOf("Mac") > -1) os = "macOS";
-  else if (ua.indexOf("Linux") > -1) os = "Linux";
-  else if (ua.indexOf("Android") > -1) os = "Android";
   else if (ua.indexOf("iPhone") > -1 || ua.indexOf("iPad") > -1) os = "iOS";
+  else if (ua.indexOf("Mac") > -1) os = "macOS";
+  else if (ua.indexOf("Android") > -1) os = "Android";
+  else if (ua.indexOf("Linux") > -1) os = "Linux";
 
-  // ── Send visit notification (once per session) ──
-  function sendEvent(eventType) {
-    // Get IP & location from free API
+  // ── Detect device ──
+  var isMobile = /Mobi|Android|iPhone|iPad/i.test(ua);
+  var device = isMobile ? "Mobile" : "Desktop";
+
+  // ── Base data (always available) ──
+  var baseData = {
+    page: document.title || "Portfolio",
+    device: device,
+    browser: browser,
+    os: os,
+    screen: screen.width + "x" + screen.height,
+    referrer: document.referrer || "Direct visit",
+    language: navigator.language || "Unknown"
+  };
+
+  // ── Send data to Google Apps Script ──
+  function sendToServer(eventType, geo) {
+    var payload = {
+      event:    eventType,
+      page:     baseData.page,
+      device:   baseData.device,
+      browser:  baseData.browser,
+      os:       baseData.os,
+      screen:   baseData.screen,
+      referrer: baseData.referrer,
+      language: baseData.language,
+      ip:       (geo && geo.ip)           ? geo.ip           : "Unknown",
+      city:     (geo && geo.city)         ? geo.city         : "Unknown",
+      region:   (geo && geo.region)       ? geo.region       : "Unknown",
+      country:  (geo && geo.country_name) ? geo.country_name : "Unknown",
+      isp:      (geo && geo.org)          ? geo.org          : "Unknown"
+    };
+
+    // Use Blob to force correct content type in all browsers
+    var blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+
+    // sendBeacon is most reliable for not getting killed by navigation
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(SCRIPT_URL, blob);
+    } else {
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        body: blob,
+        keepalive: true
+      }).catch(function() {});
+    }
+  }
+
+  // ── Get IP/location then send ──
+  function trackEvent(eventType) {
+    // Try primary IP API
     fetch("https://ipapi.co/json/")
-      .then(function(res) { return res.json(); })
+      .then(function(res) {
+        if (!res.ok) throw new Error("API failed");
+        return res.json();
+      })
       .then(function(geo) {
-        fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            event: eventType,
-            page: document.title,
-            device: isMobile ? "Mobile" : "Desktop",
-            browser: browser,
-            os: os,
-            screen: screen.width + "x" + screen.height,
-            referrer: document.referrer || "Direct visit",
-            language: navigator.language,
-            ip: geo.ip || "Unknown",
-            city: geo.city || "Unknown",
-            region: geo.region || "Unknown",
-            country: geo.country_name || "Unknown",
-            isp: geo.org || "Unknown"
-          })
-        });
+        sendToServer(eventType, geo);
       })
       .catch(function() {
-        // If IP lookup fails, send without location
-        fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            event: eventType,
-            page: document.title,
-            device: isMobile ? "Mobile" : "Desktop",
-            browser: browser,
-            os: os,
-            screen: screen.width + "x" + screen.height,
-            referrer: document.referrer || "Direct visit",
-            language: navigator.language,
-            ip: "Unknown",
-            city: "Unknown",
-            region: "Unknown",
-            country: "Unknown",
-            isp: "Unknown"
+        // Try backup IP API
+        fetch("https://ip-api.com/json/?fields=query,city,regionName,country,isp")
+          .then(function(res) { return res.json(); })
+          .then(function(data) {
+            sendToServer(eventType, {
+              ip: data.query,
+              city: data.city,
+              region: data.regionName,
+              country_name: data.country,
+              org: data.isp
+            });
           })
-        });
+          .catch(function() {
+            // Both APIs failed — send without location
+            sendToServer(eventType, null);
+          });
       });
   }
 
   // ── Track page visit (once per session) ──
-  if (!sessionStorage.getItem('visited')) {
-    sessionStorage.setItem('visited', '1');
-    sendEvent("Page Visit");
+  if (!sessionStorage.getItem("visited")) {
+    sessionStorage.setItem("visited", "1");
+    trackEvent("Page Visit");
   }
 
   // ── Track CV downloads ──
   document.querySelectorAll('a[href*="Youssef_Elsayed_CV"]').forEach(function(link) {
-    link.addEventListener('click', function() {
-      sendEvent("CV Download");
+    link.addEventListener("click", function(e) {
+      trackEvent("CV Download");
+
+      // Small delay to ensure tracking completes before download starts
+      if (!link.hasAttribute("target")) {
+        e.preventDefault();
+        var href = link.getAttribute("href");
+        setTimeout(function() {
+          // Create temporary link to trigger download
+          var a = document.createElement("a");
+          a.href = href;
+          a.download = "";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }, 300);
+      }
     });
   });
 
