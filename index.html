@@ -1230,29 +1230,94 @@ body.menu-open {
   });
 </script>
 
-<!-- Portfolio Visit Tracker -->
+<!-- Portfolio Visit & CV Download Tracker -->
 <script>
 (function() {
-  // Skip if already tracked this session
-  if (sessionStorage.getItem('tracked')) return;
-  sessionStorage.setItem('tracked', '1');
 
   var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwTln90s9DmA5IxS3XDsqguuq2Llr8y79uT4B5Eg2zupmDtgvMIoiTFcXMsRzCs2Z5X/exec";
 
-  var isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  // ── Detect device & browser info ──
+  var ua = navigator.userAgent;
+  var isMobile = /Mobi|Android|iPhone|iPad/i.test(ua);
+  var browser = "Unknown";
+  if (ua.indexOf("Chrome") > -1 && ua.indexOf("Edg") === -1) browser = "Chrome";
+  else if (ua.indexOf("Firefox") > -1) browser = "Firefox";
+  else if (ua.indexOf("Safari") > -1 && ua.indexOf("Chrome") === -1) browser = "Safari";
+  else if (ua.indexOf("Edg") > -1) browser = "Edge";
+  else if (ua.indexOf("Opera") > -1 || ua.indexOf("OPR") > -1) browser = "Opera";
 
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      page: document.title,
-      device: isMobile ? "📱 Mobile" : "💻 Desktop",
-      screen: screen.width + "x" + screen.height,
-      referrer: document.referrer || "Direct visit",
-      language: navigator.language
-    })
-  }).catch(function() {});
+  var os = "Unknown";
+  if (ua.indexOf("Windows") > -1) os = "Windows";
+  else if (ua.indexOf("Mac") > -1) os = "macOS";
+  else if (ua.indexOf("Linux") > -1) os = "Linux";
+  else if (ua.indexOf("Android") > -1) os = "Android";
+  else if (ua.indexOf("iPhone") > -1 || ua.indexOf("iPad") > -1) os = "iOS";
+
+  // ── Send visit notification (once per session) ──
+  function sendEvent(eventType) {
+    // Get IP & location from free API
+    fetch("https://ipapi.co/json/")
+      .then(function(res) { return res.json(); })
+      .then(function(geo) {
+        fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            event: eventType,
+            page: document.title,
+            device: isMobile ? "Mobile" : "Desktop",
+            browser: browser,
+            os: os,
+            screen: screen.width + "x" + screen.height,
+            referrer: document.referrer || "Direct visit",
+            language: navigator.language,
+            ip: geo.ip || "Unknown",
+            city: geo.city || "Unknown",
+            region: geo.region || "Unknown",
+            country: geo.country_name || "Unknown",
+            isp: geo.org || "Unknown"
+          })
+        });
+      })
+      .catch(function() {
+        // If IP lookup fails, send without location
+        fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            event: eventType,
+            page: document.title,
+            device: isMobile ? "Mobile" : "Desktop",
+            browser: browser,
+            os: os,
+            screen: screen.width + "x" + screen.height,
+            referrer: document.referrer || "Direct visit",
+            language: navigator.language,
+            ip: "Unknown",
+            city: "Unknown",
+            region: "Unknown",
+            country: "Unknown",
+            isp: "Unknown"
+          })
+        });
+      });
+  }
+
+  // ── Track page visit (once per session) ──
+  if (!sessionStorage.getItem('visited')) {
+    sessionStorage.setItem('visited', '1');
+    sendEvent("Page Visit");
+  }
+
+  // ── Track CV downloads ──
+  document.querySelectorAll('a[href*="Youssef_Elsayed_CV"]').forEach(function(link) {
+    link.addEventListener('click', function() {
+      sendEvent("CV Download");
+    });
+  });
+
 })();
 </script>
 </body>
